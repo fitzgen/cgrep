@@ -11,6 +11,7 @@ use std::io::BufRead;
 use std::io::Write;
 use std::path;
 use std::process;
+use std::thread;
 
 const USAGE: &'static str = "
 Usage: cgrep <string> <directory>
@@ -60,21 +61,22 @@ fn main() {
                                    None
                                }));
 
-    let readers = files.map(|file| io::BufReader::new(file));
-
-    for reader in readers {
-        for line in reader.lines() {
-            match line {
-                Err(err) => {
-                    writeln!(io::stderr(), "Error: {}", err.description()).unwrap();
-                    continue;
-                },
-                Ok(line) => {
-                    if line.contains(&args.arg_string) {
-                        println!("{}", line);
+    for file in files {
+        let pattern = args.arg_string.clone();
+        thread::spawn(move || {
+            for line in io::BufReader::new(file).lines() {
+                match line {
+                    Err(err) => {
+                        writeln!(io::stderr(), "Error: {}", err.description()).unwrap();
+                        continue;
+                    },
+                    Ok(line) => {
+                        if line.contains(&pattern) {
+                            println!("{}", line);
+                        }
                     }
                 }
             }
-        }
+        });
     }
 }
