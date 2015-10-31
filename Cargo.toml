@@ -1,0 +1,9 @@
+[package]
+name = "cgrep"
+version = "0.1.0"
+authors = ["Nick Fitzgerald <fitzgen@gmail.com>"]
+
+[dependencies]
+docopt = "0.6.74"
+rustc-serialize = "0.3"
+walker = "1.0.0"
