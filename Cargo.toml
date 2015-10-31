@@ -5,5 +5,6 @@ authors = ["Nick Fitzgerald <fitzgen@gmail.com>"]
 
 [dependencies]
 docopt = "0.6.74"
+threadpool = "0.1.4"
 rustc-serialize = "0.3"
 walker = "1.0.0"

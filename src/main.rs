@@ -1,4 +1,5 @@
 extern crate docopt;
+extern crate threadpool;
 extern crate rustc_serialize;
 extern crate walker;
 
@@ -11,7 +12,6 @@ use std::io::BufRead;
 use std::io::Write;
 use std::path;
 use std::process;
-use std::thread;
 
 const USAGE: &'static str = "
 Usage: cgrep <string> <directory>
@@ -61,9 +61,11 @@ fn main() {
                                    None
                                }));
 
+    let pool = threadpool::ThreadPool::new(8);
+
     for file in files {
         let pattern = args.arg_string.clone();
-        thread::spawn(move || {
+        pool.execute(move || {
             for line in io::BufReader::new(file).lines() {
                 match line {
                     Err(err) => {
